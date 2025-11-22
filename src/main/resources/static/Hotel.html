@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Hotel</title>
+</head>
+<body>
+  <h2>Create Hotel</h2>
+
+  <form id="hotelForm">
+    <label>Hotel ID:</label><br />
+    <input type="number" id="id" /><br /><br />
+
+    <label>Hotel Name:</label><br />
+    <input type="text" id="name" required /><br /><br />
+
+    <label>City:</label><br />
+    <input type="text" id="city" required /><br /><br />
+
+    <label>Amenities (comma separated):</label><br />
+    <input type="text" id="amenities" placeholder="WiFi, Pool, Gym" /><br /><br />
+
+    <label>Photos (comma separated URLs):</label><br />
+    <input type="text" id="photos" placeholder="photo1.jpg, photo2.jpg" /><br /><br />
+
+    <h4>Contact Info</h4>
+    <label>Phone:</label><br />
+    <input type="text" id="phone" /><br /><br />
+
+    <label>Email:</label><br />
+    <input type="email" id="email" /><br /><br />
+
+    <label>Is Active:</label>
+    <input type="checkbox" id="isActive" /><br /><br />
+
+    <button type="submit">Submit</button>
+  </form>
+
+  <h3>Response:</h3>
+  <pre id="response"></pre>
+
+  <script>
+    document.getElementById("hotelForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const hotel = {
+        id: parseInt(document.getElementById("id").value) || null,
+        name: document.getElementById("name").value,
+        city: document.getElementById("city").value,
+        amenities: document.getElementById("amenities").value
+          ? document.getElementById("amenities").value.split(",").map(a => a.trim())
+          : [],
+        photos: document.getElementById("photos").value
+          ? document.getElementById("photos").value.split(",").map(p => p.trim())
+          : [],
+        contactInfo: {
+          phone: document.getElementById("phone").value,
+          email: document.getElementById("email").value
+        },
+        isActive: document.getElementById("isActive").checked
+      };
+
+      const responseElement = document.getElementById("response");
+      responseElement.textContent = "Sending request...";
+
+      try {
+        const res = await fetch("http://localhost:8080/hotels", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(hotel),
+        });
+
+        if (!res.ok) {
+          const errText = await res.text();
+          throw new Error(`HTTP ${res.status}: ${errText}`);
+        }
+
+        const data = await res.json();
+        responseElement.textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        responseElement.textContent = "Error: " + err.message;
+      }
+    });
+  </script>
+</body>
+</html>
