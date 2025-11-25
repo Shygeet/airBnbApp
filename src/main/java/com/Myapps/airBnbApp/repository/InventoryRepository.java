@@ -20,16 +20,26 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
 
 	void deleteByRoomId(Long id);
 
-	@Query("""
-		       SELECT DISTINCT i.hotel
-		       FROM Inventory i
-		       WHERE i.city = :city
-		         AND i.date BETWEEN :startDate AND :endDate
-		         AND i.isclosed = false
-		         AND (i.totalCount - i.bookedCount - i.reservedCount) >= :roomsCount
-		       GROUP BY i.hotel
-		       HAVING COUNT(DISTINCT i.date) = :dateCount
-		       """)
+//	@Query("""
+//		       SELECT DISTINCT i.hotel
+//		       FROM Inventory i
+//		       WHERE i.city = :city
+//		         AND i.date BETWEEN :startDate AND :endDate
+//		         AND i.isclosed = false
+//		         AND (i.totalCount - i.bookedCount - i.reservedCount) >= :roomsCount
+//		       GROUP BY i.hotel
+//		       HAVING COUNT(DISTINCT i.date) = :dateCount
+//		       """)
+	@Query(
+	        "SELECT DISTINCT i.hotel " +
+	        "FROM Inventory i " +
+	        "WHERE i.city = :city " +
+	        "AND i.date BETWEEN :startDate AND :endDate " +
+	        "AND i.isclosed = false " +
+	        "AND (i.totalCount - i.bookedCount - i.reservedCount) >= :roomsCount " +
+	        "GROUP BY i.hotel " +
+	        "HAVING COUNT(DISTINCT i.date) = :dateCount"
+	)
 		Page<Hotel> findHotelsWithAvailableInventory(
 		        @Param("city") String city,
 		        @Param("startDate") LocalDate startDate,
@@ -39,14 +49,22 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
 		        Pageable pageable);
 	
 	
-	@Query("""
-		       SELECT  i
-		       FROM Inventory i
-		       WHERE i.room.id = :roomId
-		         AND i.date BETWEEN :startDate AND :endDate
-		         AND i.isclosed = false
-		         AND (i.totalCount - i.bookedCount - i.reservedCount) >= :roomsCount
-		       """)
+//	@Query("""
+//		       SELECT  i
+//		       FROM Inventory i
+//		       WHERE i.room.id = :roomId
+//		         AND i.date BETWEEN :startDate AND :endDate
+//		         AND i.isclosed = false
+//		         AND (i.totalCount - i.bookedCount - i.reservedCount) >= :roomsCount
+//		       """)
+	@Query(
+	        "SELECT i " +
+	        "FROM Inventory i " +
+	        "WHERE i.room.id = :roomId " +
+	        "AND i.date BETWEEN :startDate AND :endDate " +
+	        "AND i.isclosed = false " +
+	        "AND (i.totalCount - i.bookedCount - i.reservedCount) >= :roomsCount"
+	)
 	    @Lock(LockModeType.PESSIMISTIC_WRITE)
 		List<Inventory> findAndLockAvailableInventory(
 		        @Param("roomId") Long roomId,
