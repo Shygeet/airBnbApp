@@ -1,0 +1,19 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto17
+    commands:
+      - echo "Installing Maven dependencies"
+      - mvn clean install -DskipTests
+
+  build:
+    commands:
+      - echo "Packaging application"
+      - mvn package -DskipTests
+
+artifacts:
+  files:
+    - target/*.jar
+  discard-paths: yes
