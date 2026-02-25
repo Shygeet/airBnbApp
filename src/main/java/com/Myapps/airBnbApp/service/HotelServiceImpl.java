@@ -7,6 +7,7 @@ import javax.lang.model.element.Element;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.Myapps.airBnbApp.dto.HotelDto;
@@ -52,6 +53,7 @@ private  ModelMapper modelMapper=new ModelMapper();
 	}
 
 	@Override
+	@Cacheable
 	public HotelDto getHotelById(Long id) {
 		// TODO Auto-generated method stub
 		Hotel Hotel= hotelRepository.findById(id)
